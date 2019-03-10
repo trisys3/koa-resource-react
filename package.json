@@ -1,0 +1,23 @@
+{
+  "name": "koa-resource-react",
+  "version": "0.0.1",
+  "description": " Experimental koa middleware resembling JSX",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trisys3/koa-resource-react.git"
+  },
+  "keywords": [
+    "koa",
+    "jsx"
+  ],
+  "author": "Sean Moran (trysis3@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trisys3/koa-resource-react/issues"
+  },
+  "homepage": "https://github.com/trisys3/koa-resource-react#readme"
+}
