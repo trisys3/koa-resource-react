@@ -1,10 +1,12 @@
 {
   "name": "koa-resource-react",
   "version": "0.0.1",
-  "description": " Experimental koa middleware resembling JSX",
-  "main": "index.js",
+  "description": " Experimental reactive koa middleware resembling JSX",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src/index.js > index.js",
+    "prepare": "npm run build",
+    "watch": "npm run build -- --watch"
   },
   "repository": {
     "type": "git",
