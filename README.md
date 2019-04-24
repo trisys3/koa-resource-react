@@ -1,2 +1,2 @@
 # koa-resource-react
-Experimental koa middleware resembling JSX
+Experimental reactive koa middleware resembling JSX
