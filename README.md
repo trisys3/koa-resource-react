@@ -27,14 +27,39 @@ export function MyResource() {
 ## Create your server
 
 ```javascript
+// resource.js
+import Resource, {JSX as React} from 'koa-resource-react';
+
+export <Resource url='http://my.other.server.com/path' postAction={postIt} />;
+
+function postIt() {
+  console.log('Posting it from the server...');
+}
+
+// server.js
 import Koa from 'koa';
-import render from 'koa-resource-react';
+import {render} from 'koa-resource-react';
+import MyResource from './resource';
 
 const server = new Koa('My Resource Server');
 
 const middleware = render(MyResource);
 
 server.use(middleware);
+```
+
+## Create the client
+
+```javascript
+import React from 'react';
+import {render} from 'react-dom';
+import Resource from 'koa-resource-react';
+
+export <Resource url='http://my.other.server.com/path' postAction={postIt} />;
+
+function postIt() {
+  console.log('Posting it from the client...');
+}
 ```
 
 ## Full API
