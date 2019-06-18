@@ -28,7 +28,27 @@ export function MyResource() {
 
 ```javascript
 import Koa from 'koa';
-const server = new Koa();
+import render from 'koa-resource-react';
+
+const server = new Koa('My Resource Server');
+
+const middleware = render(MyResource);
+
+server.use(middleware);
 ```
+
+## Full API
+
+### Server JSX Attributes
+
+#### url
+
+Creates a simple proxy to `url`, sending the same body and/or query string as the incoming request. Each method can be overridden by prepending the method, e.g. `getUrl`, `postUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, only `GET and DELETE will be proxied. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used. Any other variable type is invalid.
+
+#### action
+
+Callback upon getting a request. As with `url`, can be overridden per method, e.g. `getAction`, and can be a memo-ized function, as in a function that returns a function. You can also use a method action like `getAction` with no standalone `action`. `null` or `undefined` cancels the action.
+
+Both `url` and `action` can be used, which is useful if the proxied URL is on a logging server, or if it is another `Resource` server.`
 
 [issues]: https://github.com/trisys3/koa-resource-react/issues
