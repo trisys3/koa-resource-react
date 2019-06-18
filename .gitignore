@@ -36,6 +36,12 @@ build/Release
 node_modules/
 jspm_packages/
 
+# temporary/cache files & editor metadata & lockfiles
+.*.s[a-z][a-z]
+.cache
+.temp
+.vscode
+
 # TypeScript v1 declaration files
 typings/
 
