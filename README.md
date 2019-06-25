@@ -17,28 +17,24 @@ npm install koa-resource-react
 ## Create the resource
 
 ```javascript
-import {Resource} from 'koa-resource-react';
+// resource.js
+import Resource from 'koa-resource-react';
 
 export function MyResource() {
-  return <Resource url='/my-resource' />;
+  return <Resource url='/my-resource' postAction={postIt} />;
+}
+
+function postIt() {
+  console.log('Posting it...');
 }
 ```
 
-## Create your server
+## Create the server
 
 ```javascript
-// resource.js
-import Resource, {JSX as React} from 'koa-resource-react';
-
-export <Resource url='http://my.other.server.com/path' postAction={postIt} />;
-
-function postIt() {
-  console.log('Posting it from the server...');
-}
-
 // server.js
 import Koa from 'koa';
-import {render} from 'koa-resource-react';
+import {render, {JSX as React} from 'koa-resource-react';
 import MyResource from './resource';
 
 const server = new Koa('My Resource Server');
@@ -51,29 +47,29 @@ server.use(middleware);
 ## Create the client
 
 ```javascript
+// client.js
+const {body} = document;
+const {elem} = body.querySelector('main');
+
 import React from 'react';
 import {render} from 'react-dom';
-import Resource from 'koa-resource-react';
+import MyResource from 'koa-resource-react';
 
-export <Resource url='http://my.other.server.com/path' postAction={postIt} />;
-
-function postIt() {
-  console.log('Posting it from the client...');
-}
+render(<MyResource />, elem);
 ```
 
 ## Full API
 
-### Server JSX Attributes
+### JSX Attributes
 
 #### url
 
-Creates a simple proxy to `url`, sending the same body and/or query string as the incoming request. Each method can be overridden by prepending the method, e.g. `getUrl`, `postUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, only `GET and DELETE will be proxied. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used. Any other variable type is invalid.
+Creates a simple proxy to `url`, sending the same body and/or query string as the incoming request. Each method can be overridden by prepending the method, e.g. `getUrl`, `postUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, only `GET and DELETE will be proxied. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used.
 
 #### action
 
 Callback upon getting a request. As with `url`, can be overridden per method, e.g. `getAction`, and can be a memo-ized function, as in a function that returns a function. You can also use a method action like `getAction` with no standalone `action`. `null` or `undefined` cancels the action.
 
-Both `url` and `action` can be used, which is useful if the proxied URL is on a logging server, or if it is another `Resource` server.`
+Both `url` and `action` can be used on the same element without conflicting with each other, which is useful if the proxied URL is on a logging server, or if it is another `Resource` server.`
 
 [issues]: https://github.com/trisys3/koa-resource-react/issues
