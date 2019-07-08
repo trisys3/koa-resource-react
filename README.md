@@ -8,6 +8,8 @@
 > find something wrong with it, please [open an issue][issues] and I will try
 > to fix it or guide you on how to fix it.
 
+Middleware for koa especially suited for IoT setups, or extremely complicated APIs, but flexible enough to be useful in any server or anywhere you use JavaScript.
+
 ### Install:
 
 ```bash
@@ -18,11 +20,13 @@ npm install koa-resource-react
 
 ```javascript
 // resource.js
+import {useRef} from 'react';
+
 import Resource from 'koa-resource-react';
 
-export function MyResource() {
-  return <Resource url='/my-resource' postAction={postIt} />;
-}
+export default forwardRef((_, ref) => {
+  return <Resource ref={ref} postAction={postIt} />;
+});
 
 function postIt() {
   console.log('Posting it...');
@@ -53,9 +57,18 @@ const {elem} = body.querySelector('main');
 
 import React from 'react';
 import {render} from 'react-dom';
-import MyResource from 'koa-resource-react';
+import MyResource from './resource';
 
-render(<MyResource />, elem);
+render(<App />, elem);
+
+function App() {
+  useEffect(() => {
+    // make a post
+    resource.post();
+  });
+
+  return <MyResource />;
+}
 ```
 
 ## Full API
@@ -64,7 +77,7 @@ render(<MyResource />, elem);
 
 #### url
 
-Creates a simple proxy to `url`, sending the same body and/or query string as the incoming request. Each method can be overridden by prepending the method, e.g. `getUrl`, `postUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, only `GET and DELETE will be proxied. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used.
+Creates a simple proxy to `url`, sending the same body and/or query string as the incoming request. Each method can be overridden by prepending the method, e.g. `getUrl`, `postUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, but not `url`, only `GET and DELETE will be proxied. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used.
 
 #### action
 
