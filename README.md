@@ -21,16 +21,24 @@ npm install koa-resource-react
 ```javascript
 // resource.js
 import {useRef} from 'react';
+import React from 'koa-resource-react';
 
-import Resource from 'koa-resource-react';
+import {Resource} from 'koa-resource-react';
 
-export default forwardRef((_, ref) => {
-  return <Resource ref={ref} postAction={postIt} />;
+const MyResource = forwardRef(({onChange = () => {}}, ref) => {
+    useImperativeHandle(ref, () => ({
+      change: () => {
+        console.log('Changing the resource...');
+        resource.set({some: 'prop'});
+      },
+    }));
+
+  return <Resource ref={resource} />;
 });
 
-function postIt() {
-  console.log('Posting it...');
-}
+MyResource.propTypes = {onChange: PropTypes.func};
+
+export default MyResource;
 ```
 
 ## Create the server
@@ -38,14 +46,20 @@ function postIt() {
 ```javascript
 // server.js
 import Koa from 'koa';
-import {render, {JSX as React} from 'koa-resource-react';
+import React, {render} from 'koa-resource-react';
 import MyResource from './resource';
 
 const server = new Koa('My Resource Server');
 
-const middleware = render(MyResource);
+const myResource = <MyResource onChange={onChange} />;
+
+const middleware = render(myResource);
 
 server.use(middleware);
+
+function onChange() {
+  console.log('Everything just changed.');
+}
 ```
 
 ## Create the client
@@ -55,19 +69,22 @@ server.use(middleware);
 const {body} = document;
 const {elem} = body.querySelector('main');
 
-import React from 'react';
+// you can also import from 'koa-resource-react' like on the server
+import React, {useRef} from 'react';
 import {render} from 'react-dom';
 import MyResource from './resource';
 
 render(<App />, elem);
 
 function App() {
+const resource = useRef();
+
   useEffect(() => {
-    // make a post
-    resource.post();
+    console.log('Changing everything...');
+    resource.change();
   });
 
-  return <MyResource />;
+  return <MyResource ref={resource} />;
 }
 ```
 
