@@ -107,7 +107,7 @@ This is a table of which action is called on the server when it gets a request w
 |--------|--------|
 |  PUT   |  add   |
 |--------|--------|
-| DELETE | create |
+| DELETE | delete |
 -------------------
 
 ## Full API
