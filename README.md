@@ -67,7 +67,7 @@ function onChange() {
 ```javascript
 // client.js
 const {body} = document;
-const {elem} = body.querySelector('main');
+const elem = body.querySelector('main');
 
 // you can also import from 'koa-resource-react' like on the server
 import React, {useRef} from 'react';
@@ -87,6 +87,28 @@ const resource = useRef();
   return <MyResource ref={resource} />;
 }
 ```
+
+## Actions
+
+Actions are the guts of `koa-resource-react`. They control how each resource works, and what happens when certain things change. They use the pattern of CRUD, Create-Read-Update-Delete.
+
+Usually, you add event listeners, as props, to add the actions, and then call them with something like `refs`. You generally only need listener props on the server, as the actions get called when the server gets a request with a certain method, using the table below. You may need event listeners, refs, or both on the client.
+
+### Action <=> Method
+
+This is a table of which action is called on the server when it gets a request with the corresponding method:
+
+-------------------
+| Method | Action |
+|--------|--------|
+|  GET   |  get   |
+|--------|--------|
+|  POST  |  set   |
+|--------|--------|
+|  PUT   |  add   |
+|--------|--------|
+| DELETE | create |
+-------------------
 
 ## Full API
 
