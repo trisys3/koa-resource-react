@@ -1,5 +1,5 @@
 # koa-resource-react
-## Experimental reactive koa middleware resembling JSX
+## Experimental object-oriented middleware for koa resembling JSX
 
 > NOTE: This middleware is very experimental. It is meant to be an inspiration
 > for myself & others. If something else comes out of it, whether by me or
@@ -9,6 +9,8 @@
 > to fix it or guide you on how to fix it.
 
 Middleware for koa especially suited for IoT setups, or extremely complicated APIs, but flexible enough to be useful in any server or anywhere you use JavaScript.
+
+As much as possible, the client and server functionality are exactly the same. "Client" here usually means a browser or `electron` application, and "server" means a node server. The heuristics aren't foolproof, and we may look into adding support for forcing one or the other, though sone functionality may still not be possible for either or both cases depending on the environment.
 
 ### Install:
 
@@ -92,7 +94,7 @@ const resource = useRef();
 
 Actions are the guts of `koa-resource-react`. They control how each resource works, and what happens when certain things change. They use the pattern of CRUD, Create-Read-Update-Delete.
 
-Usually, you add event listeners, as props, to add the actions, and then call them with something like `refs`. You generally only need listener props on the server, as the actions get called when the server gets a request with a certain method, using the table below. You may need event listeners, refs, or both on the client.
+With syncing, these functions are automatically called whenever the props change. You can also add `onAction` or `onGet`, `onSet`, etc. as event listener props to add the actions, and then call them with something like `refs`. You generally only need listener props on the server, as the actions get called when the server gets a request with a certain method, using the table below. You may need event listeners, refs, or both on the client.
 
 ### Action <=> Method
 
@@ -112,16 +114,34 @@ This is a table of which action is called on the server when it gets a request w
 
 ## Full API
 
-### JSX Attributes
+### JSX Props
 
 #### url
 
-Creates a simple proxy to `url`, sending the same body and/or query string as the incoming request. Each method can be overridden by prepending the method, e.g. `getUrl`, `postUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, but not `url`, only `GET and DELETE will be proxied. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used.
+Adds a commection to `url`. On the server, this sends the same body and/or query string as the incoming request. On the client, all current properties are added to the request. Both respect the whitelist specified by `props`, if any. Each action can be overridden by prepending the method, e.g. `getUrl`, `setUrl`, etc. These can also be used instead of `url`, for example if `getUrl` and `deleteUrl` are given, but not `url`, only `get` and `delete` will be available for syncing. A value of `null` or `undefined` cancels the proxy. If given a function, the return value will be used as the URL.
 
-#### action
+#### onAction
 
-Callback upon getting a request. As with `url`, can be overridden per method, e.g. `getAction`, and can be a memo-ized function, as in a function that returns a function. You can also use a method action like `getAction` with no standalone `action`. `null` or `undefined` cancels the action.
+Callback upon getting a request. Can be overridden per action, e.g. `onGet` or `onSet`, and can be a memo-ized function, as in a function that returns a function. You can also use a method action like `onGet` with no standalone `action`. `null` or `undefined` cancels the action.
 
-Both `url` and `action` can be used on the same element without conflicting with each other, which is useful if the proxied URL is on a logging server, or if it is another `Resource` server.`
+If `url` and `sync` are both passed, a separate action listener is defined, sending all the props as a request to the said `url`, respecting the `props` whitelist.
+
+#### props
+
+Array of properties to retrieve or set, for example when syncing when incoming props change or when using an `on<action>` ref. No other props will be retrieved or set. If not passed, all props will be available for getting & setting, minus props defined by the component like `action` and `url`.
+
+#### sync
+
+Keep the props on this component in sync with the ones on the server given by `url`. As with almost everything else, available on both the client and server, though typically only useful on the client.
+
+Can also be a number, for the number of milliseconds to wait before syncing. If props change again before the time is up, only the latest change is respected.
+
+### Ref functions
+
+### <action>
+
+Call the action. This is typically only needed on the client, and only if `sync` is not used. If `url` and `sync` are both passed, this function is called internally whenever the props change, though it can still be called manually. The function can be defined on the server, too.
+
+Can be passed a prop and a value, or an object with multiple props & values. Each property & its value is put into the body for `set`s, as these are `POST` requests, and the query string for other actions. If nothing is passed, uses all the properties and values currently passed as props, respecting the `props` whitelist. In this way, you can simulate the `sync` prop with debouncing or other more advanced cases like only syncing at certain times of day. Note that debouncing is also possible by passing a number to the `sync` prop
 
 [issues]: https://github.com/trisys3/koa-resource-react/issues
